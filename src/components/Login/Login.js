@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Login.css'
 import GoogleLogo from './../../img/google.svg'
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
 
 const Login = () => {
-    const [email,setEmail]= useState('');
-    const [password,setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('')
     const [
         signInWithEmailAndPassword,
         user,
         loading,
         error,
-      ] = useSignInWithEmailAndPassword(auth);
+    ] = useSignInWithEmailAndPassword(auth);
 
+    const location = useLocation()
+    const from = location.state?.from?.pathename || '/';
     const navigate = useNavigate()
-    const handleEmailBlur = event =>{
+    const handleEmailBlur = event => {
         setEmail(event.target.value)
     }
-    const handlePasswordBlur = event =>{
+    const handlePasswordBlur = event => {
         setPassword(event.target.value)
     }
-    if(user){
-        navigate('/shop')
+    if (user) {
+        navigate(from, { replace: true })
     }
-    const handleUserSignIn= event=>{
+    const handleUserSignIn = event => {
         event.preventDefault()
-        signInWithEmailAndPassword(email,password)
+        signInWithEmailAndPassword(email, password)
     }
 
     return (
@@ -43,10 +45,10 @@ const Login = () => {
                         <label htmlFor="password">Password</label>
                         <input onBlur={handlePasswordBlur} type="password" name="password" id="" required />
                     </div>
-                    <p style={{color: 'red'}}>{error?.message}</p>
-                {
-                    loading && <p>Loading...</p>
-                }
+                    <p style={{ color: 'red' }}>{error?.message}</p>
+                    {
+                        loading && <p>Loading...</p>
+                    }
                     <input className='form-submit' type="submit" value="Login" />
                 </form>
                 <p style={{ textAlign: 'center', margin: '0' }}>
