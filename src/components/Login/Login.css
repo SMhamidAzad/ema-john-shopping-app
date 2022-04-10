@@ -34,6 +34,7 @@
     border: 1px solid #95A0A7;
     height: 55px;
     font-size: 24px;
+    padding-left: 8px;
 }
 
 .form-submit {

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './SignUp.css'
 import GoogleLogo from './../../img/google.svg'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import auth from './../../firebase.init'
 
 const SignUp = () => {
     const [email,setEmail]=useState('')
@@ -9,6 +11,8 @@ const SignUp = () => {
     const [confirmpass,setConfirmPass]=useState('')
     const [error,setError]=useState('')
 
+    const [createUserWithEmailAndPassword, hookError,user] = useCreateUserWithEmailAndPassword(auth)
+    const navigate = useNavigate()
     const handleEmailBlur = event =>{
         setEmail(event.target.value)
     }
@@ -18,11 +22,20 @@ const SignUp = () => {
     const handleConfirmPassBlur = event =>{
         setConfirmPass(event.target.value)
     }
+    if(user){
+       navigate('/shop')
+    }
     const handleCreateUser = event =>{
         event.preventDefault();
         if(password!==confirmpass){
             setError('Your two passwords did not match')
         }
+        if(password.length<6){
+            setError('password must be 6 character or longer')
+            return;
+        }
+        createUserWithEmailAndPassword(email,password)
+       
     }
     return (
         <div className='form-container'>
@@ -42,6 +55,7 @@ const SignUp = () => {
                         <input onBlur={handleConfirmPassBlur} type="password" name="confirm-password" id="" required />
                     </div>
                     <p style={{color: 'red'}}>{error}</p>
+                    <p style={{color: 'red'}}>{hookError}</p>
                     <input className='form-submit' type="submit" value="Sign Up" />
                 </form>
                 <p style={{ textAlign: 'center', margin: '0' }}>
